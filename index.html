@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ApexSwing — AI-Powered Swing Trading & Trend Detection</title>
+  <meta name="description" content="Precision AI trend detection and swing trading setups for US and Tel Aviv (TASE) markets." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070b14;
+      --surface: #0f172a;
+      --surface-border: rgba(148, 163, 184, 0.14);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.25);
+      --blue: #38bdf8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(16, 185, 129, 0.08), transparent 40%),
+        radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.08), transparent 45%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+    }
+
+    header {
+      width: 100%;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 24px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .logo-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1e293b, #090d16);
+      border: 1.5px solid #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: -0.5px;
+      box-shadow: 0 0 20px var(--accent-glow);
+      position: relative;
+    }
+
+    .logo-badge::after {
+      content: '';
+      position: absolute;
+      bottom: 6px;
+      width: 18px;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .brand-name {
+      font-weight: 700;
+      font-size: 19px;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-name span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    main {
+      flex: 1;
+      width: 100%;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 48px 24px 72px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 28px;
+    }
+
+    .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 5vw, 4.1rem);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      max-width: 840px;
+      margin-bottom: 22px;
+    }
+
+    h1 .highlight {
+      background: linear-gradient(90deg, #10b981, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: clamp(1.05rem, 2vw, 1.22rem);
+      color: var(--muted);
+      max-width: 650px;
+      line-height: 1.65;
+      margin-bottom: 40px;
+    }
+
+    .waitlist-box {
+      width: 100%;
+      max-width: 490px;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      padding: 8px;
+      border-radius: 14px;
+      display: flex;
+      gap: 8px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      margin-bottom: 16px;
+    }
+
+    .waitlist-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      padding: 12px 16px;
+      font-size: 15px;
+      font-family: inherit;
+    }
+
+    .waitlist-box input::placeholder { color: #64748b; }
+
+    .waitlist-box button {
+      background: var(--accent);
+      color: #042f2e;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 22px;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.2s;
+      white-space: nowrap;
+    }
+
+    .waitlist-box button:hover {
+      background: #34d399;
+      transform: translateY(-1px);
+    }
+
+    .form-note {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 56px;
+    }
+
+    .success-msg {
+      display: none;
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 48px;
+    }
+
+    /* Chart Preview Card */
+    .terminal-card {
+      width: 100%;
+      max-width: 920px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--surface-border);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 64px;
+      text-align: left;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    .terminal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--surface-border);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .dots { display: flex; gap: 7px; }
+    .dot { width: 11px; height: 11px; border-radius: 50%; background: #334155; }
+    .dot:nth-child(1) { background: #ef4444; }
+    .dot:nth-child(2) { background: #f59e0b; }
+    .dot:nth-child(3) { background: #10b981; }
+
+    .ticker-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--blue);
+      background: rgba(56, 189, 248, 0.1);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .chart-svg {
+      width: 100%;
+      height: 170px;
+      display: block;
+    }
+
+    .features {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      text-align: left;
+    }
+
+    .feature-card {
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid var(--surface-border);
+      border-radius: 16px;
+      padding: 26px;
+      transition: border-color 0.2s;
+    }
+
+    .feature-card:hover { border-color: rgba(16, 185, 129, 0.4); }
+
+    .feature-icon {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .feature-card h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .feature-card p {
+      font-size: 14.5px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    footer {
+      width: 100%;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 28px 24px;
+      border-top: 1px solid var(--surface-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 13.5px;
+      color: #64748b;
+    }
+
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
+
+    @media (max-width: 540px) {
+      .waitlist-box { flex-direction: column; }
+      .waitlist-box button { width: 100%; padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="#" class="brand">
+      <div class="logo-badge">AS</div>
+      <div class="brand-name">APEX<span>SWING</span></div>
+    </a>
+    <nav class="nav-links">
+      <a href="https://x.com/apexswing_ai" target="_blank" rel="noopener">X (Twitter)</a>
+      <a href="https://github.com/apexswing" target="_blank" rel="noopener">GitHub</a>
+      <a href="mailto:hello@apexswing.ai">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="pill">
+      <span class="pulse"></span>
+      <span>PRIVATE ALPHA • US &amp; TASE MARKETS</span>
+    </div>
+
+    <h1>
+      AI-Driven <span class="highlight">Trend Detection</span><br />
+      for Classic Swing Traders
+    </h1>
+
+    <p class="subtitle">
+      ApexSwing combines classic technical price action with proprietary machine learning models to scan, filter, and alert high-probability swing setups across US equities and the Tel Aviv Stock Exchange.
+    </p>
+
+    <form class="waitlist-box" id="waitlistForm">
+      <input type="email" id="emailInput" placeholder="Enter your email for early access..." required />
+      <button type="submit">Join Waitlist</button>
+    </form>
+    <p class="form-note" id="formNote">No spam. Get notified when our Private Beta opens.</p>
+    <p class="success-msg" id="successMsg">✓ Request received! We'll notify you at your inbox ahead of launch.</p>
+
+    <div class="terminal-card">
+      <div class="terminal-header">
+        <div class="dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+        <div class="ticker-tag">AI SCANNER // SWING MOMENTUM DETECTED (+14.8%)</div>
+      </div>
+      <svg class="chart-svg" viewBox="0 0 860 170" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="170" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#10b981" stop-opacity="0.32" />
+            <stop offset="100%" stop-color="#10b981" stop-opacity="0.0" />
+          </linearGradient>
+        </defs>
+        <path d="M0 140 Q 90 132, 160 112 T 320 96 T 480 62 T 650 44 T 860 16 L 860 170 L 0 170 Z" fill="url(#areaGrad)" />
+        <path d="M0 140 Q 90 132, 160 112 T 320 96 T 480 62 T 650 44 T 860 16" stroke="#10b981" stroke-width="3" stroke-linecap="round" />
+        <circle cx="480" cy="62" r="5" fill="#38bdf8" />
+        <circle cx="650" cy="44" r="5" fill="#10b981" />
+        <circle cx="860" cy="16" r="6" fill="#10b981" />
+      </svg>
+    </div>
+
+    <section class="features">
+      <div class="feature-card">
+        <span class="feature-icon">01 // MULTI-MARKET</span>
+        <h3>US &amp; TASE Coverage</h3>
+        <p>Unified trend scanning across NASDAQ, NYSE, and Tel Aviv Stock Exchange equities with tailored liquidity filters.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">02 // CLASSIC + AI</span>
+        <h3>Structure &amp; Momentum</h3>
+        <p>Built around proven swing principles—breakouts, pullbacks to key moving averages, and volume confirmation enhanced by AI scoring.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">03 // RISK FIRST</span>
+        <h3>Clear Entry &amp; Stop Levels</h3>
+        <p>Every detected setup highlights structural support, invalidation levels, and asymmetric risk-to-reward profiles.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div>© 2026 ApexSwing. All rights reserved.</div>
+    <div>Inquiries: <a href="mailto:hello@apexswing.ai">hello@apexswing.ai</a></div>
+  </footer>
+
+  <script>
+    document.getElementById('waitlistForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('emailInput').value;
+      window.location.href = 'mailto:hello@apexswing.ai?subject=ApexSwing%20Early%20Access%20Waitlist&body=Please%20add%20me%20to%20the%20ApexSwing%20waitlist:%20' + encodeURIComponent(email);
+      document.getElementById('formNote').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'block';
+      document.getElementById('emailInput').value = '';
+    });
+  </script>
+</body>
+</html>
